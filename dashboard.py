@@ -155,8 +155,6 @@
 # st.write(f"✅ Best channel by ROI: **{channel_data.loc[channel_data['ROI'].idxmax(), 'Channel']}**")
 # st.write(f"💰 Total profit generated: **${filtered_df['Profit'].sum():,.2f}**")
 # st.write(f"📊 Average ROI across all campaigns: **{filtered_df['ROI'].mean():.2f}%**")
-
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -320,7 +318,7 @@ col_a, col_b, col_c = st.columns(3)
 with col_a:
     st.markdown(f"""
     <div class="metric-card" style="border-left-color: #00ff88;">
-        <div class="metric-value"> {best_roi['Campaign_Name']}</div>
+        <div class="metric-value">🏆 {best_roi['Campaign_Name']}</div>
         <div class="metric-label">Best ROI Campaign | {best_roi['ROI']:.2f}% ROI</div>
     </div>
     """, unsafe_allow_html=True)
@@ -334,12 +332,12 @@ with col_b:
 with col_c:
     st.markdown(f"""
     <div class="metric-card" style="border-left-color: #ffa502;">
-        <div class="metric-value"> {best_conversion['Campaign_Name']}</div>
+        <div class="metric-value">🔥 {best_conversion['Campaign_Name']}</div>
         <div class="metric-label">Most Conversions | {best_conversion['Conversions']:,} total</div>
     </div>
     """, unsafe_allow_html=True)
 
-st.markdown("## Channel Performance")
+st.markdown("## 📊 Channel Performance")
 channel_data = filtered_df.groupby('Channel').agg({
     'Conversions': 'sum',
     'Cost': 'sum',
@@ -356,7 +354,7 @@ with col_chart2:
     fig_cost.update_layout(bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
     st.plotly_chart(fig_cost, use_container_width=True)
 
-st.markdown("## Campaign Performance Table")
+st.markdown("## 📋 Campaign Performance Table")
 st.dataframe(campaign_summary.sort_values('ROI', ascending=False), use_container_width=True)
 
 st.markdown("## 📈 Trends Over Time")
@@ -373,9 +371,9 @@ st.markdown("""
     <h3>💡 Key Business Insights</h3>
     <ul>
         <li>✅ Best performing channel: <strong>Email</strong> with highest ROI</li>
-        <li> Total profit generated: <strong>${:,.2f}</strong></li>
-        <li> Average ROI across all campaigns: <strong>{:.2f}%</strong></li>
-        <li> Most conversions achieved by: <strong>{}</strong> campaign</li>
+        <li>💰 Total profit generated: <strong>${:,.2f}</strong></li>
+        <li>📊 Average ROI across all campaigns: <strong>{:.2f}%</strong></li>
+        <li>🎯 Most conversions achieved by: <strong>{}</strong> campaign</li>
     </ul>
 </div>
 """.format(filtered_df['Profit'].sum(), filtered_df['ROI'].mean(), best_conversion['Campaign_Name']), unsafe_allow_html=True)
