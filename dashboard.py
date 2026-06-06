@@ -155,70 +155,86 @@
 # st.write(f"✅ Best channel by ROI: **{channel_data.loc[channel_data['ROI'].idxmax(), 'Channel']}**")
 # st.write(f"💰 Total profit generated: **${filtered_df['Profit'].sum():,.2f}**")
 # st.write(f"📊 Average ROI across all campaigns: **{filtered_df['ROI'].mean():.2f}%**")
+
+
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-st.set_page_config(page_title="Marketing Performance Dashboard", layout="wide", page_icon="📊")
+st.set_page_config(page_title="Marketing Performance Dashboard", layout="wide")
 
 st.markdown("""
 <style>
     .stApp {
-        background-color: #f5f7fa;
+        background-color: #0e1117;
     }
     .main-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 2rem;
-        border-radius: 20px;
+        border-bottom: 2px solid #2d8cff;
+        padding: 1rem 0 1.5rem 0;
         margin-bottom: 2rem;
-        text-align: center;
     }
     .main-header h1 {
-        color: white;
+        color: #ffffff;
         margin: 0;
-        font-size: 2.5rem;
+        font-size: 2rem;
+        font-weight: 500;
     }
     .main-header p {
-        color: rgba(255,255,255,0.9);
+        color: #8b8f9b;
         margin: 0.5rem 0 0 0;
-        font-size: 1.1rem;
+        font-size: 0.9rem;
     }
     .metric-card {
-        background-color: white;
+        background-color: #1a1c23;
         padding: 1rem;
-        border-radius: 15px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        text-align: center;
-        border-left: 4px solid #667eea;
+        border-radius: 8px;
+        border: 1px solid #2a2c34;
     }
     .metric-value {
         font-size: 1.8rem;
-        font-weight: bold;
-        color: #2c3e50;
+        font-weight: 600;
+        color: #ffffff;
     }
     .metric-label {
-        font-size: 0.85rem;
-        color: #7f8c8d;
+        font-size: 0.8rem;
+        color: #8b8f9b;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
+        margin-top: 0.3rem;
     }
     .insight-box {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 1.5rem;
-        border-radius: 15px;
-        color: white;
+        background-color: #1a1c23;
+        padding: 1.2rem;
+        border-radius: 8px;
+        border-left: 3px solid #2d8cff;
         margin: 1rem 0;
     }
+    .insight-box h3 {
+        color: #ffffff;
+        margin: 0 0 0.8rem 0;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+    .insight-box p {
+        color: #c9cdd6;
+        margin: 0.3rem 0;
+        font-size: 0.9rem;
+    }
     hr {
-        margin: 2rem 0;
+        border-color: #2a2c34;
+        margin: 1.5rem 0;
+    }
+    .stDataFrame {
+        background-color: #1a1c23;
     }
 </style>
 """, unsafe_allow_html=True)
 
 st.markdown("""
 <div class="main-header">
-    <h1>📊 Marketing Performance Dashboard</h1>
-    <p>Real-time insights | Campaign Analytics | ROI Tracking</p>
+    <h1>Marketing Performance Dashboard</h1>
+    <p>Campaign analytics | Channel performance | ROI tracking</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -226,10 +242,10 @@ df = pd.read_csv('marketing_data_with_metrics.csv')
 df['Date'] = pd.to_datetime(df['Date'])
 
 with st.sidebar:
-    st.markdown("## 🎛️ Filters")
+    st.markdown("### Filters")
     st.markdown("---")
-    selected_campaign = st.multiselect("Select Campaign", df['Campaign_Name'].unique(), default=df['Campaign_Name'].unique())
-    selected_channel = st.multiselect("Select Channel", df['Channel'].unique(), default=df['Channel'].unique())
+    selected_campaign = st.multiselect("Campaign", df['Campaign_Name'].unique(), default=df['Campaign_Name'].unique())
+    selected_channel = st.multiselect("Channel", df['Channel'].unique(), default=df['Channel'].unique())
     date_range = st.date_input("Date Range", [df['Date'].min(), df['Date'].max()])
 
 filtered_df = df[
@@ -242,30 +258,31 @@ filtered_df = df[
 filtered_df['Revenue'] = filtered_df['Conversions'] * 10
 filtered_df['Profit'] = filtered_df['Revenue'] - filtered_df['Cost']
 
-st.markdown("## 📈 Key Performance Indicators")
-col1, col2, col3, col4 = st.columns(4)
-with col1:
+st.markdown("### Key Performance Indicators")
+
+kpi_cols = st.columns(4)
+with kpi_cols[0]:
     st.markdown(f"""
     <div class="metric-card">
         <div class="metric-value">{filtered_df['Impressions'].sum():,}</div>
         <div class="metric-label">Total Impressions</div>
     </div>
     """, unsafe_allow_html=True)
-with col2:
+with kpi_cols[1]:
     st.markdown(f"""
     <div class="metric-card">
         <div class="metric-value">{filtered_df['Clicks'].sum():,}</div>
         <div class="metric-label">Total Clicks</div>
     </div>
     """, unsafe_allow_html=True)
-with col3:
+with kpi_cols[2]:
     st.markdown(f"""
     <div class="metric-card">
         <div class="metric-value">{filtered_df['Conversions'].sum():,}</div>
         <div class="metric-label">Total Conversions</div>
     </div>
     """, unsafe_allow_html=True)
-with col4:
+with kpi_cols[3]:
     st.markdown(f"""
     <div class="metric-card">
         <div class="metric-value">${filtered_df['Cost'].sum():,.2f}</div>
@@ -273,37 +290,38 @@ with col4:
     </div>
     """, unsafe_allow_html=True)
 
-col5, col6, col7, col8 = st.columns(4)
-with col5:
+kpi_cols2 = st.columns(4)
+with kpi_cols2[0]:
     st.markdown(f"""
     <div class="metric-card">
         <div class="metric-value">${filtered_df['Revenue'].sum():,.2f}</div>
         <div class="metric-label">Total Revenue</div>
     </div>
     """, unsafe_allow_html=True)
-with col6:
+with kpi_cols2[1]:
     st.markdown(f"""
     <div class="metric-card">
         <div class="metric-value">${filtered_df['Profit'].sum():,.2f}</div>
         <div class="metric-label">Total Profit</div>
     </div>
     """, unsafe_allow_html=True)
-with col7:
+with kpi_cols2[2]:
     st.markdown(f"""
     <div class="metric-card">
         <div class="metric-value">{filtered_df['CTR'].mean():.2f}%</div>
-        <div class="metric-label">Avg CTR</div>
+        <div class="metric-label">Average CTR</div>
     </div>
     """, unsafe_allow_html=True)
-with col8:
+with kpi_cols2[3]:
     st.markdown(f"""
     <div class="metric-card">
         <div class="metric-value">{filtered_df['ROI'].mean():.2f}%</div>
-        <div class="metric-label">Avg ROI</div>
+        <div class="metric-label">Average ROI</div>
     </div>
     """, unsafe_allow_html=True)
 
-st.markdown("## 🏆 Campaign Highlights")
+st.markdown("### Campaign Performance Summary")
+
 campaign_summary = filtered_df.groupby('Campaign_Name').agg({
     'ROI': 'mean',
     'Conversions': 'sum',
@@ -314,66 +332,65 @@ best_roi = campaign_summary.loc[campaign_summary['ROI'].idxmax()]
 worst_roi = campaign_summary.loc[campaign_summary['ROI'].idxmin()]
 best_conversion = campaign_summary.loc[campaign_summary['Conversions'].idxmax()]
 
-col_a, col_b, col_c = st.columns(3)
-with col_a:
+highlight_cols = st.columns(3)
+with highlight_cols[0]:
     st.markdown(f"""
-    <div class="metric-card" style="border-left-color: #00ff88;">
-        <div class="metric-value">🏆 {best_roi['Campaign_Name']}</div>
-        <div class="metric-label">Best ROI Campaign | {best_roi['ROI']:.2f}% ROI</div>
+    <div class="metric-card">
+        <div class="metric-value">{best_roi['Campaign_Name']}</div>
+        <div class="metric-label">Best ROI Campaign | {best_roi['ROI']:.1f}% ROI</div>
     </div>
     """, unsafe_allow_html=True)
-with col_b:
+with highlight_cols[1]:
     st.markdown(f"""
-    <div class="metric-card" style="border-left-color: #ff6b6b;">
-        <div class="metric-value">📉 {worst_roi['Campaign_Name']}</div>
-        <div class="metric-label">Worst ROI Campaign | {worst_roi['ROI']:.2f}% ROI</div>
+    <div class="metric-card">
+        <div class="metric-value">{worst_roi['Campaign_Name']}</div>
+        <div class="metric-label">Lowest ROI Campaign | {worst_roi['ROI']:.1f}% ROI</div>
     </div>
     """, unsafe_allow_html=True)
-with col_c:
+with highlight_cols[2]:
     st.markdown(f"""
-    <div class="metric-card" style="border-left-color: #ffa502;">
-        <div class="metric-value">🔥 {best_conversion['Campaign_Name']}</div>
+    <div class="metric-card">
+        <div class="metric-value">{best_conversion['Campaign_Name']}</div>
         <div class="metric-label">Most Conversions | {best_conversion['Conversions']:,} total</div>
     </div>
     """, unsafe_allow_html=True)
 
-st.markdown("## 📊 Channel Performance")
+st.markdown("### Channel Performance")
+
 channel_data = filtered_df.groupby('Channel').agg({
     'Conversions': 'sum',
     'Cost': 'sum',
     'ROI': 'mean'
 }).reset_index()
 
-col_chart1, col_chart2 = st.columns(2)
-with col_chart1:
-    fig_pie = px.pie(channel_data, values='Conversions', names='Channel', title='Conversion Distribution by Channel', color_discrete_sequence=px.colors.qualitative.Set2)
-    fig_pie.update_layout(bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
+chart_cols = st.columns(2)
+
+with chart_cols[0]:
+    fig_pie = px.pie(channel_data, values='Conversions', names='Channel', title='Conversion Distribution by Channel', color_discrete_sequence=['#2d8cff', '#4a9eff', '#6eaaff', '#92b6ff', '#b6c2ff'])
+    fig_pie.update_layout(plot_bgcolor='#0e1117', paper_bgcolor='#0e1117', font_color='#ffffff', title_font_color='#ffffff')
     st.plotly_chart(fig_pie, use_container_width=True)
-with col_chart2:
-    fig_cost = px.bar(channel_data, x='Channel', y='Cost', title='Cost per Channel', color='Channel', color_discrete_sequence=px.colors.qualitative.Set3)
-    fig_cost.update_layout(bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
+
+with chart_cols[1]:
+    fig_cost = px.bar(channel_data, x='Channel', y='Cost', title='Cost per Channel', color='Channel', color_discrete_sequence=['#2d8cff', '#4a9eff', '#6eaaff', '#92b6ff', '#b6c2ff'])
+    fig_cost.update_layout(plot_bgcolor='#0e1117', paper_bgcolor='#0e1117', font_color='#ffffff', title_font_color='#ffffff', xaxis_title='Channel', yaxis_title='Cost (USD)')
     st.plotly_chart(fig_cost, use_container_width=True)
 
-st.markdown("## 📋 Campaign Performance Table")
+st.markdown("### Campaign Performance Table")
 st.dataframe(campaign_summary.sort_values('ROI', ascending=False), use_container_width=True)
 
-st.markdown("## 📈 Trends Over Time")
-daily_trends = filtered_df.groupby('Date').agg({
-    'Conversions': 'sum',
-    'Profit': 'sum'
-}).reset_index()
-fig_trend = px.line(daily_trends, x='Date', y='Conversions', title='Conversions Trend Over Time', markers=True, color_discrete_sequence=['#667eea'])
-fig_trend.update_layout(bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
+st.markdown("### Trends Over Time")
+daily_trends = filtered_df.groupby('Date').agg({'Conversions': 'sum', 'Profit': 'sum'}).reset_index()
+fig_trend = px.line(daily_trends, x='Date', y='Conversions', title='Conversion Trends Over Time', markers=True, color_discrete_sequence=['#2d8cff'])
+fig_trend.update_layout(plot_bgcolor='#0e1117', paper_bgcolor='#0e1117', font_color='#ffffff', title_font_color='#ffffff')
 st.plotly_chart(fig_trend, use_container_width=True)
 
-st.markdown("""
+st.markdown("### Business Insights")
+st.markdown(f"""
 <div class="insight-box">
-    <h3>💡 Key Business Insights</h3>
-    <ul>
-        <li>✅ Best performing channel: <strong>Email</strong> with highest ROI</li>
-        <li>💰 Total profit generated: <strong>${:,.2f}</strong></li>
-        <li>📊 Average ROI across all campaigns: <strong>{:.2f}%</strong></li>
-        <li>🎯 Most conversions achieved by: <strong>{}</strong> campaign</li>
-    </ul>
+    <h3>Key Findings</h3>
+    <p>Best performing channel by ROI: <strong>{channel_data.loc[channel_data['ROI'].idxmax(), 'Channel']}</strong></p>
+    <p>Total profit generated: <strong>${filtered_df['Profit'].sum():,.2f}</strong></p>
+    <p>Average ROI across all campaigns: <strong>{filtered_df['ROI'].mean():.1f}%</strong></p>
+    <p>Total conversions achieved: <strong>{filtered_df['Conversions'].sum():,}</strong></p>
 </div>
-""".format(filtered_df['Profit'].sum(), filtered_df['ROI'].mean(), best_conversion['Campaign_Name']), unsafe_allow_html=True)
+""", unsafe_allow_html=True)
