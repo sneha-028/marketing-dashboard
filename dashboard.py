@@ -117,10 +117,6 @@
 # worst_roi = campaign_summary.loc[campaign_summary['ROI'].idxmin()]
 # best_conversion = campaign_summary.loc[campaign_summary['Conversions'].idxmax()]
 
-# col_a, col_b, col_c = st.columns(3)
-# col_a.metric("🏆 Best ROI Campaign", best_roi['Campaign_Name'], f"{best_roi['ROI']:.2f}% ROI")
-# col_b.metric("📉 Worst ROI Campaign", worst_roi['Campaign_Name'], f"{worst_roi['ROI']:.2f}% ROI")
-# col_c.metric("🔥 Most Conversions", best_conversion['Campaign_Name'], f"{best_conversion['Conversions']:,} conversions")
 
 # st.subheader("Channel Performance")
 
@@ -151,17 +147,10 @@
 # fig_trend = px.line(daily_trends, x='Date', y='Conversions', title='Conversions Trend Over Time')
 # st.plotly_chart(fig_trend, use_container_width=True)
 
-# st.subheader("Business Insights Summary")
-# st.write(f"✅ Best channel by ROI: **{channel_data.loc[channel_data['ROI'].idxmax(), 'Channel']}**")
-# st.write(f"💰 Total profit generated: **${filtered_df['Profit'].sum():,.2f}**")
-# st.write(f"📊 Average ROI across all campaigns: **{filtered_df['ROI'].mean():.2f}%**")
-
-
 
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-
 st.set_page_config(page_title="Marketing Performance Dashboard", layout="wide")
 
 st.markdown("""
@@ -247,7 +236,6 @@ with st.sidebar:
     selected_campaign = st.multiselect("Campaign", df['Campaign_Name'].unique(), default=df['Campaign_Name'].unique())
     selected_channel = st.multiselect("Channel", df['Channel'].unique(), default=df['Channel'].unique())
     date_range = st.date_input("Date Range", [df['Date'].min(), df['Date'].max()])
-
 filtered_df = df[
     (df['Campaign_Name'].isin(selected_campaign)) &
     (df['Channel'].isin(selected_channel)) &
